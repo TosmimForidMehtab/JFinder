@@ -1,12 +1,17 @@
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const userSchema = new Schema(
     {
         username: {
             type: String,
             required: [true, "Firstname cannot be empty"],
-            minLength: [3, "Username must be at least 3 characters"],
+            minLength: [
+                3,
+                "Username must be at least 3 characters got {VALUE}",
+            ],
         },
         lastname: {
             type: String,
@@ -33,7 +38,8 @@ const userSchema = new Schema(
                         minSymbols: 1,
                     });
                 },
-                message: "Password is not strong enough",
+                message:
+                    "Password must contain at least 6 characters, 1 uppercase, 1 lowercase, 1 number and 1 symbol",
             },
         },
         country: {
@@ -43,6 +49,25 @@ const userSchema = new Schema(
     },
     { timestamps: true }
 );
+
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.createToken = function () {
+    return jwt.sign({ userId: this._id }, process.env.JWT_ACCESS_SECRET, {
+        expiresIn: process.env.JWT_ACCESS_EXPIRESIN,
+    });
+};
 
 const User = mongoose.model("User", userSchema);
 export default User;
