@@ -1,20 +1,16 @@
 import User from "../models/userModel.js";
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
         if (!username || !email || !password) {
-            return res.status(400).json({
-                message: "All fields are required",
-                success: false,
-            });
+            res.statusCode = 400;
+            next(new Error("All fields are required"));
         }
 
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({
-                message: "User already exists",
-                success: false,
-            });
+            res.statusCode = 400;
+            next(new Error("User already exists"));
         }
         const user = await User.create({
             username,
@@ -28,10 +24,7 @@ export const register = async (req, res) => {
         });
     } catch (error) {
         console.log(`Error in register controller: ${error}`);
-        res.status(500).json({
-            message: "Internal Server Error",
-            success: false,
-            error,
-        });
+        res.statusCode = 500;
+        next(error);
     }
 };
