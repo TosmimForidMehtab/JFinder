@@ -65,7 +65,7 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 userSchema.methods.createToken = function () {
-    return jwt.sign({ userId: this._id }, process.env.JWT_ACCESS_SECRET, {
+    return jwt.sign({ _id: this._id }, process.env.JWT_ACCESS_SECRET, {
         expiresIn: process.env.JWT_ACCESS_EXPIRESIN,
     });
 };

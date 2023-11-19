@@ -58,21 +58,27 @@ export const register = async (req, res) => {
     }
 };
 
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email) {
-            res.statusCode = 400;
-            next(new Error("Email is required"));
+            res.status(400).json({
+                message: "Email is required",
+                success: false,
+            });
         }
         if (!password) {
-            res.statusCode = 400;
-            next(new Error("Password cannot be empty"));
+            res.status(400).json({
+                message: "Password is required",
+                success: false,
+            });
         }
         const user = await User.findOne({ email }).select("+password");
         if (!user) {
-            res.statusCode = 404;
-            next(new Error(`Invalid credentials`));
+            res.status(400).json({
+                message: "Invalid credentials",
+                success: false,
+            });
         }
         const isMatch = await user.matchPassword(password);
         if (!isMatch) {
@@ -81,11 +87,13 @@ export const login = async (req, res, next) => {
                 success: false,
             });
         }
+        const token = user.createToken();
         user.password = undefined;
         res.status(200).json({
             message: "User logged in successfully",
             success: true,
             user,
+            token,
         });
     } catch (error) {}
 };
