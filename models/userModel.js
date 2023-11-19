@@ -28,6 +28,7 @@ const userSchema = new Schema(
         password: {
             type: String,
             required: [true, "Password cannot be empty"],
+            select: true,
             validate: {
                 validator: (value) => {
                     return validator.isStrongPassword(value, {
