@@ -7,4 +7,4 @@ Tech. Stack used:
 -   Express Js
 -   MongoDB
 
-##### API documentation will be released as well
+##### This project is purely used for learning purposes. It is not meant for production.
