@@ -1,10 +1,10 @@
-# JFinder
+# RecruitXpress
 
-This repo is a collection of APIs needed for a job finding web app.
+This repo is a collection of APIs needed for a job creating and managing web app.
 Tech. Stack used:
 
 -   Node Js
 -   Express Js
 -   MongoDB
 
-##### This project is purely used for learning purposes. It is not meant for production.
+##### A good frontend will be very much appreciated.
